@@ -3867,6 +3867,22 @@ description."
          (doc (elpy-rpc-get-completion-docstring symbol)))
     (elpy-autodoc--show-doc doc)))
 
+;;;;;;;;;;;;;;;;;;
+;;; Module: autopep8
+
+(defun elpy-autopep8-fix-code ()
+  "Automatically formats Python code to conform to the PEP 8 style guide."
+  (interactive)
+  (elpy--fix-code-with-formatter "fix_code"))
+
+;;;;;;;;;;;;;;;;;;
+;;; Module: yapf
+
+(defun elpy-yapf-fix-code ()
+  "Automatically formats Python code with yapf."
+  (interactive)
+  (elpy--fix-code-with-formatter "fix_code_with_yapf"))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Backwards compatibility
 
