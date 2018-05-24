@@ -852,23 +852,6 @@ item in another window.\n\n")
               (gethash "error_output" config) "\n"
               "\n"))
 
-    ;; Interactive python interpreter not in the current virtual env
-    (when (and pyvenv-virtual-env
-               (not (string-prefix-p (expand-file-name pyvenv-virtual-env)
-                                     (executable-find
-                                      python-shell-interpreter))))
-      (elpy-insert--para
-       "The python interactive interpreter (" python-shell-interpreter
-       ") is not installed on the current virtualenv ("
-       pyvenv-virtual-env "). The system binary ("
-       (executable-find python-shell-interpreter)
-       ") will be used instead."
-       "\n")
-      (insert "\n")
-      (widget-create 'elpy-insert--pip-button
-                     :package python-shell-interpreter)
-      (insert "\n\n"))
-
     ;; Requested backend unavailable
     (when (and (gethash "python_rpc_executable" config)
                (not (gethash "jedi_version" config)))
@@ -3712,18 +3695,14 @@ description."
 
 (defun elpy-flymake-error-at-point ()
   "Return the flymake error at point, or nil if there is none."
-  (cond ((boundp 'flymake-err-info)     ; emacs < 26
-         (let* ((lineno (line-number-at-pos))
-                (err-info (car (flymake-find-err-info flymake-err-info
-                                                      lineno))))
-           (when err-info
-             (mapconcat #'flymake-ler-text
-                        err-info
-                        ", "))))
-        ((and (fboundp 'flymake-diagnostic-text)
-              (fboundp 'flymake-diagnostics)) ; emacs >= 26
-         (mapconcat #'flymake-diagnostic-text
-                    (flymake-diagnostics (point)) ", "))))
+  (when (boundp 'flymake-err-info)
+    (let* ((lineno (line-number-at-pos))
+           (err-info (car (flymake-find-err-info flymake-err-info
+                                                 lineno))))
+      (when err-info
+        (mapconcat #'flymake-ler-text
+                   err-info
+                   ", ")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Module: Highlight Indentation
